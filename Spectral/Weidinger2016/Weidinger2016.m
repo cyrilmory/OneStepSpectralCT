@@ -45,15 +45,13 @@ for iter=1:maxIter
     ratios = measurements.' ./ forw;
     
     % Compute the gradient of the surrogate function at f_n
-    temp = (1 - ratios);
-    ToBackProject = repmat(temp, [1 1 nmat]) .* forwmu;
+    ToBackProject = (1 - ratios) .* forwmu;
     ToBackProject = squeeze(sum(ToBackProject, 1));
     gradients = A.' * ToBackProject;
      
     % Compute the hessian of the surrogate function at f_n
-    ToBackProject = forwmumu;
-    ToBackProject = squeeze(sum(ToBackProject, 1));
-    ToBackProject = ToBackProject .* repmat(sum_aij, [1 nmat nmat]);
+    ToBackProject = squeeze(sum(forwmumu, 1));
+    ToBackProject = ToBackProject .* sum_aij;
     ToBackProject = reshape(ToBackProject, [size(ToBackProject, 1) nmat * nmat]);
     hessians = A.' * ToBackProject;
 
