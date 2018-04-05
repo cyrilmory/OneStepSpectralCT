@@ -1,4 +1,4 @@
-function [iterates, costs] = Cai2013(y, ObjectSize, A, M, S, k_d, maxIter, T, regulWeights, delta_h, runOnGPU)
+function [iterates, costs] = Cai2013(y, ObjectSize, A, M, S, k_d, maxIter, T, regulWeights, delta_h, runOnGPU, useNesterov)
 
 % Initialize conjugate gradient
 nmat = size(M, 2);
@@ -18,13 +18,28 @@ if (runOnGPU)
     T = gpuArray(T);
     regulWeights = gpuArray(regulWeights);
     delta_h = gpuArray(delta_h);
+
     x_k = zeros(ObjectSize^2, nmat, 'gpuArray');
-    d_k_minus_one = zeros(size(x_k), 'gpuArray');
-    g_k_minus_one = zeros(size(x_k), 'gpuArray');
 else
     x_k = zeros(ObjectSize^2, nmat);
-    d_k_minus_one = zeros(size(x_k));
-    g_k_minus_one = zeros(size(x_k));
+end
+
+d_k_minus_one = x_k;
+g_k_minus_one = x_k;
+
+% Initialize Nesterov intermediate variables
+if (useNesterov)
+    t_nesterov = ones(1,maxIter, 'like', x_k);
+    sum_nesterov = zeros(1,maxIter + 1, 'like', x_k);
+    v_k = x_k;
+    z_k = x_k;
+    
+    for k=2:(maxIter + 1)
+        t_nesterov(1,k) = 0.5*(1+sqrt(1+ 4 * t_nesterov(1,k-1)^2));
+        sum_nesterov(1,k) = sum_nesterov(1,k-1) + t_nesterov(1,k);
+    end
+    ratios_nesterov = t_nesterov ./ sum_nesterov;
+    ratios_nesterov(1, 1) = 0; % To remove the NaN, although it seems it is never used
 end
 
 % Initialize iterates and costs
@@ -104,6 +119,7 @@ for iter=1:maxIter
 
     alpha_k = - sum(g_k(:) .* d_k(:)) / dt_H_d;
     candidateFound = (iter==1);
+    u_k = -alpha_k * d_k;
 
     % Compute the cost function for this candidate alpha. If it is larger than the
     % current cost function, divide alpha_k by 2 and try again
@@ -112,7 +128,19 @@ for iter=1:maxIter
     % reinitialize the direction to -g_k
     NbTimesAlphaHalved = 0;
     while(not(candidateFound))
-        x_kCandidate = x_k + alpha_k * d_k;
+        
+        % Compute the potential update
+        u_k = -alpha_k * d_k;
+
+        if (useNesterov)
+            % Get the candidate
+            x_kCandidate = z_k - u_k;
+        else
+            x_kCandidate = x_k - u_k;
+        end
+ 
+        % Compute the cost in order to determine whether the candidate
+        % actually decreases the cost function or not
         [y_bar, Q] = ForwardModel(x_kCandidate);
         candidateCost = ComputeCost(y_bar, x_kCandidate);
         if (candidateCost < costs(iter-1))
@@ -135,7 +163,12 @@ for iter=1:maxIter
             d_k_minus_one = d_k;
             descentDirectionJustReset = true;
         end
-        
+    end
+    
+    if (useNesterov)
+        % Compute the rest of the Nesterov's update
+        v_k = v_k - t_nesterov(1, iter) * u_k;
+        z_k = x_k + ratios_nesterov(1, iter+1) * (v_k - x_k);
     end
     
     % Store the iterate and cost
