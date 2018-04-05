@@ -119,12 +119,12 @@ for iter=1:maxIter
     end
 end
 
-figure(2); 
-hold off
-plot(primals);
-hold on
-plot(duals);
-legend('primal', 'dual');
+% figure(2); 
+% hold off
+% plot(primals);
+% hold on
+% plot(duals);
+% legend('primal', 'dual');
 
     function out = K_times(in, af, ec, abso)
         X_in = X * in;
