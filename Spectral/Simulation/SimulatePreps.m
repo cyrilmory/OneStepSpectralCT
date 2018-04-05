@@ -39,7 +39,7 @@ load('../ScannerModel/detectorResponse.mat', 'detectorResponse');
 
 % Get them under matrix form, consistent with Cai's paper
 M = materialAttenuations;
-S_unbinned = detectorResponse * diag(incidentSpectrum);
+S_unbinned = detectorResponse .* incidentSpectrum.';
 
 % Define thresholds and get S binned
 S = cat(1, sum(S_unbinned(30:50, :), 1), ...
@@ -53,9 +53,9 @@ unit = ObjectSize/8;
 water=zeros(ObjectSize);
 water(unit+1:7*unit, unit+1:7*unit) = ones(6*unit, 6*unit);
 iodine=zeros(ObjectSize);
-iodine(2*unit+1:3*unit, 2*unit+1:3*unit) = ones(unit, unit) * 0.01;
+iodine(2*unit+1:3*unit, 2*unit+1:3*unit) = ones(unit, unit) * 0.01 / 4.933;
 gadolinium=zeros(ObjectSize);
-gadolinium(4*unit+1:5*unit, 5*unit+1:6*unit) = ones(unit, unit) * 0.01;
+gadolinium(4*unit+1:5*unit, 5*unit+1:6*unit) = ones(unit, unit) * 0.01 / 7.9;
 
 % writeImageResult(iodine, 'iodineGT.png', 0, 0.01);
 % writeImageResult(gadolinium, 'gadoliniumGT.png', 0, 0.01);
