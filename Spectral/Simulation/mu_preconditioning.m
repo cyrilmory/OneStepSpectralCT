@@ -51,7 +51,7 @@ function [out, passage] = mu_preconditioning(in, syntheticMaterials, spectrum)
         disp('Using Fessler trick')
         
         if (numel(size(spectrum))==3) % If spectrum is pixel-dependent
-            S = spectrum(:,:,floor(size(spectrum, 3))); % Take the spectrum value in the middle
+            S = spectrum(:,:,floor(size(spectrum, 3)/2)); % Take the spectrum value in the middle
         else
             S = spectrum;
         end
