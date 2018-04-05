@@ -18,6 +18,7 @@ runOnGPU = true;
 NbIters = 5000;
 
 %% Cai2013
+useNesterov = false;
 % Load preps and repmat the spectrum
 for mu_precond = {'none','normalize', 'orthonormalize'}
     
@@ -26,7 +27,7 @@ for mu_precond = {'none','normalize', 'orthonormalize'}
     
     % Run Cai2013
     regulWeights = [100000, 100000, 100];
-    [Cai2013_iterates, Cai2013_costs ]= Cai2013(y, ObjectSize, A, M, S, k_d, NbIters, T, regulWeights, delta_huber, runOnGPU);
+    [Cai2013_iterates, Cai2013_costs ]= Cai2013(y, ObjectSize, A, M, S, k_d, NbIters, T, regulWeights, delta_huber, runOnGPU, useNesterov);
 
     % Save the results
     filename = ['/home/mory/data/MatlabOneStep/Cai/Cai2013_', mu_precond{1}, '_', num2str(regulWeights(1)), '_', num2str(regulWeights(2)), '_' , num2str(regulWeights(3)), '.mat'];

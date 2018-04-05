@@ -1,4 +1,4 @@
-function [toplot, iterations, thresholdReached] = getMaterialConcentration(material, iterates, writeEveryNthIterate, threshold, cropROI)
+function [toplot, iterations, finalmean, finalstd] = getMaterialConcentration(material, iterates, writeEveryNthIterate, cropROI)
 %GETMATERIALCONCENTRATION Outputs material's mean concentration over iterations
 % Make the ROI smaller by cropROI pixels than the reference square containing each material, to ignore border effects
 
@@ -19,13 +19,9 @@ if (strcmp(material,'water'))
 end
 
 toplot = squeeze(sum(maskedIterates, 1)) / sum(mask(:));
-
-thresholdReached = find(toplot>threshold);
-if (numel(thresholdReached) == 0)
-    thresholdReached = 0;
-else
-    thresholdReached = thresholdReached(1) * writeEveryNthIterate;
-end
+finalmean = toplot(end);
+tmp = maskedIterates(:,end);
+finalstd = std(tmp(mask(:)>0));
 
 iterations = (1:numel(toplot)) * writeEveryNthIterate;
 end
