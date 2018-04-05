@@ -23,6 +23,11 @@ runOnGPU = true;
 [Barber2016_iterates, gaps, costs]= Barber2016(y, ObjectSize, A, M, S, T, NbIters, lambda, theta, gammas, runOnGPU);
 toc
 
+% Multiply the results by each material's density, in order to get something in g/ml
+Barber2016_iterates(:,1,:)=Barber2016_iterates(:,1,:)*4.933; %Iodine
+Barber2016_iterates(:,2,:)=Barber2016_iterates(:,2,:)*7.9; %Gadolinium
+% Nothing to do for water, since it has density 1
+
 % Show the resulting sequence of iterates
 PlayIterates(Barber2016_iterates, [0 0 0], [0.015 0.015 1.5])
 
@@ -34,7 +39,3 @@ figure(2); loglog(costs - min(costs));
 
 % % Save the iterates, if necessary
 save('/home/mory/data/MatlabOneStep/Barber/Barber_64_6400.mat', 'Barber2016_iterates', '-v7.3');
-
-% Works with lambda = 0.0001, 'normalize' for synthetic materials, and theta = 1
-% Works with lambda = 0.001, 'normalize' for synthetic materials, and theta = 0.5
-% Works with lambda = 0.01, 'normalize' for synthetic materials, and theta = 0

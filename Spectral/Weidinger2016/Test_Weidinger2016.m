@@ -4,7 +4,7 @@
 
 % Set the size of the phantom
 ObjectSize = 64;
-NbIters = 200;
+NbIters = 20;
 NbPixelsPerProj = round(ObjectSize * sqrt(2));
 
 % Simulate noisy preps
@@ -17,13 +17,15 @@ lambda = [1, 1, 1];
 
 % Perform reconstruction
 runOnGPU = false;
-[Weidinger2016_Regul_iterates, costs ]= Weidinger2016(y, ObjectSize, A, M, S, T, NbIters, lambda, runOnGPU);
+[Weidinger2016_iterates, costs ]= Weidinger2016(y, ObjectSize, A, M, S, T, NbIters, lambda, runOnGPU);
+
+% Multiply the results by each material's density, in order to get something in g/ml
+Weidinger2016_iterates(:,1,:)=Weidinger2016_iterates(:,1,:)*4.933; %Iodine
+Weidinger2016_iterates(:,2,:)=Weidinger2016_iterates(:,2,:)*7.9; %Gadolinium
+% Nothing to do for water, since it has density 1
 
 % Show the resulting sequence of iterates
-PlayIterates(Weidinger2016_Regul_iterates, [0 0 0], [0.015 0.015 1.5])
+PlayIterates(Weidinger2016_iterates, [0 0 0], [0.015 0.015 1.5])
 
 % Plot the resulting costs, in loglog scale
-plot(costs)
-
-% % Save the iterates, if necessary
-% save('../Results/Weidinger2016Regul.mat', 'Weidinger2016_Regul_iterates');
+loglog(costs - min(costs(:)))

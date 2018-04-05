@@ -19,10 +19,17 @@ delta_hyperbola = [0.0001, 0.0001, 0.01];
 % - the LongAndFessler2014 method
 runOnGPU = false;
 tic
-[Long2014iterates, costs] = Long2014(y, ObjectSize, NbPixelsPerProj, A, M, S, T, NbIters, lambda, NbSubsets, delta_hyperbola, runOnGPU);
+[Long2014_iterates, costs] = Long2014(y, ObjectSize, NbPixelsPerProj, A, M, S, T, NbIters, lambda, NbSubsets, delta_hyperbola, runOnGPU);
 toc
+
+% Multiply the results by each material's density, in order to get something in g/ml
+Long2014_iterates(:,1,:)=Long2014_iterates(:,1,:)*4.933; %Iodine
+Long2014_iterates(:,2,:)=Long2014_iterates(:,2,:)*7.9; %Gadolinium
+% Nothing to do for water, since it has density 1
+
+% Show the resulting sequence of iterates
+PlayIterates(Long2014_iterates, [0 0 0], [0.015 0.015 1.5])
 
 % Plot the resulting costs, in loglog scale
 loglog(costs - min(costs(:)))
 
-PlayIterates(Long2014iterates, [0 0 0], [0.015 0.015 1.5])
