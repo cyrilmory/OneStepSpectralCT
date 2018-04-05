@@ -95,15 +95,13 @@ for iter=1:maxIter
         ratios = SubMeasurements{subset}.' ./ (forw + eps);
 
         % Compute the gradient of the data-attachment surrogate function at alpha_k
-        temp = (1 - ratios);
-        ToBackProject = repmat(temp, [1 1 nmat]) .* forwmu;
+        ToBackProject = (1 - ratios) .* forwmu;
         ToBackProject = squeeze(sum(ToBackProject, 1));
         gradients = SubAs{subset}.' * ToBackProject;
         
         % Compute the hessian of the surrogate function at alpha_k
-        ToBackProject = forwmumu;
-        ToBackProject = squeeze(sum(ToBackProject, 1));
-        ToBackProject = ToBackProject .* repmat(Sum_aijs{subset}, [1 nmat nmat]);
+        ToBackProject = squeeze(sum(forwmumu, 1));
+        ToBackProject = ToBackProject .* Sum_aijs{subset};
         ToBackProject = reshape(ToBackProject, [size(ToBackProject, 1) nmat * nmat]);
         hessians = SubAs{subset}.' * ToBackProject;
 
