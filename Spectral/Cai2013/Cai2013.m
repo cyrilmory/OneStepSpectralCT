@@ -24,7 +24,7 @@ else
     x_k = zeros(ObjectSize^2, nmat);
 end
 
-d_k_minus_one = x_k;
+d_k = x_k;
 g_k_minus_one = x_k;
 
 % Initialize Nesterov intermediate variables
@@ -85,8 +85,7 @@ for iter=1:maxIter
     if (beta<0)
         beta = 0;
     end
-    d_k = -g_k + beta * d_k_minus_one;
-    d_k_minus_one = d_k;
+    d_k = -g_k + beta * d_k;
     g_k_minus_one = g_k;
 
     % Compute the descent step
@@ -160,7 +159,6 @@ for iter=1:maxIter
             alpha_k = 0; 
             candidateFound = true;
             d_k = -g_k;
-            d_k_minus_one = d_k;
             descentDirectionJustReset = true;
         end
     end
