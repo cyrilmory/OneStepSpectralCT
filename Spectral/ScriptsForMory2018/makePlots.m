@@ -227,17 +227,19 @@ Cai2013_fessler = load('/home/mory/data/MatlabOneStep/Cai/Cai2013_simulations_fe
 Cai2013_fessler_iterates = Cai2013_fessler.Cai2013_iterates;
 Cai2013_fessler_costs = Cai2013_fessler.Cai2013_costs;
 
+Mini = min(cat(1, Cai2013_none_costs(:), Cai2013_normalize_costs(:), Cai2013_orthonormalize_costs(:), Cai2013_fessler_costs(:)));
+
 Cai2013_none_costs_toplot = Cai2013_none_costs(10:10:end);
-Cai2013_none_costs_toplot = Cai2013_none_costs_toplot - min(Cai2013_none_costs_toplot);
+Cai2013_none_costs_toplot = Cai2013_none_costs_toplot - Mini;
 
 Cai2013_normalize_costs_toplot = Cai2013_normalize_costs(10:10:end);
-Cai2013_normalize_costs_toplot = Cai2013_normalize_costs_toplot - min(Cai2013_normalize_costs_toplot);
+Cai2013_normalize_costs_toplot = Cai2013_normalize_costs_toplot - Mini;
 
 Cai2013_orthonormalize_costs_toplot = Cai2013_orthonormalize_costs(10:10:end);
-Cai2013_orthonormalize_costs_toplot = Cai2013_orthonormalize_costs_toplot - min(Cai2013_orthonormalize_costs_toplot);
+Cai2013_orthonormalize_costs_toplot = Cai2013_orthonormalize_costs_toplot - Mini;
 
 Cai2013_fessler_costs_toplot = Cai2013_fessler_costs(10:10:end);
-Cai2013_fessler_costs_toplot = Cai2013_fessler_costs_toplot - min(Cai2013_fessler_costs_toplot);
+Cai2013_fessler_costs_toplot = Cai2013_fessler_costs_toplot - Mini;
 
 x_Cai = (1:size(Cai2013_none_iterates, 3)) * 10;
 
