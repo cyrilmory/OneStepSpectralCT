@@ -9,7 +9,7 @@
 \usepackage{amsfonts,amssymb,amsmath,amsthm}
 \usepackage{subfigure}
 \usepackage{graphicx}
-\graphicspath{{figures/}}
+\graphicspath{{figures/}{../Biblio/}}
 \usepackage[footnotesize]{caption}
 \usepackage[utf8]{inputenc} %Manage accents (useful when writing things in French)
 \usepackage[numbers]{natbib}
@@ -307,6 +307,33 @@ In the present document, we neglect all the constraints and the way they are man
  \item $t_{im}(s_i(x)) = \bar{y}_{im}(s_i(x)) - Y_{im}h_{im}(s_i(x))$: no physical interpretation
  \item $\bar{L}(x) = \sum_{m=1}^{M_0} \sum_{i=1}^{N_d} t_{im}(s_i(x))$: negative log-likelihood 
 \end{itemize}
+
+\subsection{A note on the conditions for a function to be a surrogate}
+
+Let $\Psi: \mathbb{R} \to \mathbb{R}$ and $\Phi : \mathbb{R} \to \mathbb{R}$ be functions differentiable in $x_0 \in \mathbb{R}$.
+$\Phi$ is a surrogate of $\Psi$ if and only if
+\begin{equation}
+  \left\{
+  \begin{array}{lll}
+    \forall x \in \mathbb{R}, \Phi(x) \geq \Psi(x)\\
+    \Phi(x_0) = \Psi(x_0) \\
+    \Phi'(x_0) = \Psi'(x_0)
+  \end{array}
+  \right.
+\end{equation}
+The condition on the derivative, though, actually stems from the other two, as can be shown using the first order Taylor expansion of $\Phi$ and $\Psi$.
+Let $h \in \mathbb{R}$. From the first condition, we have:
+\begin{equation}
+\begin{split}
+  & \Phi(x_0 + h) \geq \Psi(x_0 + h) \\
+  \implies & \Phi(x_0) + h \Phi'(x_0) + o(h) \geq \Psi(x_0) + h \Psi'(x_0) + o(h) \\
+  \iff & h \Phi'(x_0) + o(h) \geq h \Psi'(x_0) + o(h) \text{ since } \Phi(x_0) = \Psi(x_0) \\
+  \iff & h \left( \Phi'(x_0) - \Psi'(x_0) \right) \geq o(h)
+  \end{split}
+\end{equation}
+Choosing alternatively $h > 0$ and $h < 0$ and dividing by $h$ yields both $\Phi'(x_0) - \Psi'(x_0) \geq o(1)$ and 
+$\Phi'(x_0) - \Psi'(x_0) \leq o(1)$, which means $\Phi'(x_0) - \Psi'(x_0)= 0$, i.e. $\Phi'(x_0) = \Psi'(x_0)$
+This generalizes easily to functions $\mathbb{R} \to \mathbb{R}$. 
 
 \subsection{Step by step calculations}
 The first surrogate is found by replacing $h_{im}(s_i)$ by its tangent plane, i.e. by its first order Taylor expansion around $s_{im}^{(n)}$. There is nothing to do 
@@ -760,6 +787,6 @@ Let us now comment the equations of the algorithm:
 
 
 \bibliographystyle{ieeetr}
-\bibliography{bibliography}
+\bibliography{/home/mory/Documents/ArticlesAndNotes/Biblio/bibliography}
 
 \end{document}
